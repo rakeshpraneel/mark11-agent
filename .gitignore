@@ -1,0 +1,63 @@
+# Environment Variables
+.env
+.env.*
+*.env
+
+# Installation file
+*-dev.txt
+
+# Python specific
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv/
+.env/
+
+# IDE specific (e.g., VS Code, PyCharm)
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Database files (if used locally)
+*.db
+*.sqlite3
+*.sqlite
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+
+# Testing related
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# OS specific
+.DS_Store
+Thumbs.db
