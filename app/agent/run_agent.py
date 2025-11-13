@@ -29,7 +29,8 @@ async def run_agent():
 
     # Step 2: Switch to DatabaseSessionService
     # SQLite database will be created automatically
-    db_url = "sqlite:///my_agent_data.db"  # Local SQLite file
+    # db_url = "sqlite:///my_agent_data.db"  # Local SQLite file
+    db_url = settings.DB_URL
     session_service = DatabaseSessionService(db_url=db_url)
 
     # Step 3: Create a new runner with persistent storage

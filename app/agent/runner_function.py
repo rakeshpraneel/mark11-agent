@@ -12,7 +12,7 @@ from google.genai import types
 
 async def run_session(
     runner_instance: Runner,
-    user_queries: list[str] | str = None,
+    user_queries: str = None,
     session_name: str = "default",
     session_service: any = None,
     user_id: str = "default"

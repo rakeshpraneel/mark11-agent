@@ -1,3 +1,5 @@
 google-adk
-fastapi==0.121.1
+fastapi
 uvicorn
+pydantic_settings
+psycopg2
