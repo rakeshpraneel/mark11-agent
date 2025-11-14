@@ -18,6 +18,7 @@ async def run_session(
     user_id: str = "default"
     ):
     print(f"\n ### Session: {session_name}")
+    print(f"\n ### User Id: {user_id}")
 
     # Get app name from the Runner
     app_name = runner_instance.app_name
