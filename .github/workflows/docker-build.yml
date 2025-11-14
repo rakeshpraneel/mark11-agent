@@ -30,3 +30,8 @@ jobs:
         tags: |
           rocky03/mark11agent:latest
           rocky03/mark11agent:${{ github.sha }}
+    - name: Render Deploy
+      env:
+        deploy_url: ${{ secrets.RENDER_WEBHOOK }}
+      run: |
+        curl "$deploy_url"
