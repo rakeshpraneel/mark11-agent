@@ -37,7 +37,7 @@ async def run_agent():
     runner = Runner(agent=chatbot_agent, app_name=settings.APP_NAME, session_service=session_service)
 
     print("✅ Upgraded to persistent sessions!")
-    print(f"   - Database: my_agent_data.db")
+    print(f" {session_service}  - Database: {db_url}")
     print(f"   - Sessions will survive restarts!")
 
 
