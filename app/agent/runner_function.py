@@ -28,6 +28,7 @@ async def run_session(
             app_name=app_name, user_id=user_id, session_id=session_name
         )
     except:
+        print("Session already exist...So retriving it")
         session = await session_service.get_session(
             app_name=app_name, user_id=user_id, session_id=session_name
         )
