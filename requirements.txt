@@ -2,4 +2,4 @@ google-adk
 fastapi
 uvicorn
 pydantic_settings
-psycopg2
+psycopg2-binary
