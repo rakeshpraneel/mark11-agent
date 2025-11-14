@@ -7,6 +7,7 @@ from google.adk.apps.app import App, EventsCompactionConfig
 from google.adk.sessions import DatabaseSessionService
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
+from google.genai import types
 
 import app.config.retry as retry
 import app.agent.runner_function as runner_function
@@ -20,11 +21,39 @@ async def run_agent():
     global runner
     global session_service
 
+    system_instruction = """
+                You are a structured assistant with smart formatting rules.
+
+RULES:
+1. If the response is short (1-2 sentences), return plain text without any JSON, bullets, newlines, or markdown.
+2. If the response is detailed, multi-step, or long:
+   - Use clean, human-readable bullet points.
+   - Keep formatting minimal and compatible with Swagger.
+   - Avoid markdown symbols such as **, ##, or backticks.
+   - Use simple hyphen '-' bullets OR numbered bullets.
+3. NEVER include JSON formatting.
+4. NEVER escape characters (no \\n). Use real newlines.
+5. Keep all output clean and readable.
+
+Examples:
+
+SHORT ANSWER:
+"Yes, you can update a Docker image without restarting the database."
+
+LONG ANSWER:
+- Step 1: Build the updated image.
+- Step 2: Push it to Docker Hub.
+- Step 3: Trigger the Render deployment webhook.
+- Step 4: The Render service will pull the new image.
+
+ALWAYS follow this smart-format rule.
+"""
+
     chatbot_agent = LlmAgent(
-    model=Gemini(model="gemini-2.5-flash-lite", retry_options=retry.retry_config),
+    model=Gemini(model="gemini-2.5-flash-lite", retry_options=retry.retry_config, system_instruction=system_instruction),
     name="text_chat_bot",
     description="A text chatbot with persistent memory",
-    tools=[google_search]
+    tools=[google_search],
 )
 
     # Step 2: Switch to DatabaseSessionService

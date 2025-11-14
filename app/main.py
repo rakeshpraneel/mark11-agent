@@ -5,7 +5,7 @@ import uvicorn
 
 import app.core.api_setup as api_setup
 import app.agent.run_agent as run_agent
-import app.routers.chat as chat 
+from app.routers import chat,learn 
 
 @asynccontextmanager
 async def lifespan(_app = FastAPI):
@@ -16,7 +16,8 @@ async def lifespan(_app = FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.include_router(chat.router, prefix="/sauluhAI/v1")
+app.include_router(chat.router, prefix="/sauluhAI/v1",tags=["Want to bail out ?"])
+app.include_router(learn.router, prefix="/sauluhAI/v1",tags=["Want to bail out ?"])
 
 
 if __name__ == '__main__':

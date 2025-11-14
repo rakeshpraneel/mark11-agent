@@ -64,4 +64,4 @@ async def run_session(
         print("No queries!")
 
 
-print("✅ Helper functions defined.")
+print("Helper functions defined.")

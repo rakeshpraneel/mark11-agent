@@ -5,7 +5,9 @@ import app.agent.run_agent as run_agent
 
 router = APIRouter()
 
-@router.post("/send_message")
+@router.post("/send_message",summary="Chat with Sauluh",
+             description="Feeling bored or want to know something, chat with sauluh he may help you, "\
+             "He is running on free tier so pls be mindfull or else he'll run away 🏃")
 async def chat_with_agent(input_msg: str, request: Request):
     try:
         client_host = request.client.host
