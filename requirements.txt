@@ -2,7 +2,6 @@ google-adk
 fastapi
 uvicorn
 pydantic_settings
-psycopg2-binary
 psycopg2
 qdrant-client
 beautifulsoup4

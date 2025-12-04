@@ -28,7 +28,7 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: |
-          rocky03/mark11agent:latest
+          rocky03/mark11agent:v1.1
           rocky03/mark11agent:${{ github.sha }}
     - name: Render Deploy
       env:
