@@ -1,11 +1,13 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import FileResponse
 from contextlib import asynccontextmanager
 import uvicorn
 
 
 import app.core.api_setup as api_setup
 import app.agent.run_agent as run_agent
-from app.routers import chat,learn 
+from app.routers import chat,learn,scraper,query 
 
 @asynccontextmanager
 async def lifespan(_app = FastAPI):
@@ -18,6 +20,20 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(chat.router, prefix="/sauluhAI/v1",tags=["Want to bail out ?"])
 app.include_router(learn.router, prefix="/sauluhAI/v1",tags=["Want to bail out ?"])
+app.include_router(scraper.router, prefix="/sauluhAI/v1",tags=["Want to skim legal codes ?"])
+app.include_router(query.router, prefix="/sauluhAI/v1",tags=["Want to know about legal codes ?"])
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"], # Allows all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"], # Allows all headers
+)
+
+@app.get("/")
+async def home_page():
+    return FileResponse('app/templates/legal_conversation.html')
 
 
 if __name__ == '__main__':

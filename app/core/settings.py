@@ -5,5 +5,7 @@ class Settings(BaseSettings):
     GOOGLE_API_KEY: str = ""
     APP_NAME: str = "sauluh"
     DB_URL: str = ""
+    QDRANT_CLUSTER: str =""
+    QDRANT_API_KEY: str =""
 
 settings = Settings()

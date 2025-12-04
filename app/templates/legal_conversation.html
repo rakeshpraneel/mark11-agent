@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAUL...Rataalada v1.1</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'VT323', monospace;
+            background: #000;
+            color: #00ff00;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 255, 0, 0.03) 0px,
+                    transparent 1px,
+                    transparent 2px,
+                    rgba(0, 255, 0, 0.03) 3px
+                );
+        }
+        
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 1000;
+            animation: flicker 0.15s infinite;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            50% { opacity: 1; }
+            100% { opacity: 0.97; }
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 900px;
+            height: 85vh;
+            background: #0a0a0a;
+            border: 4px solid #00ff00;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 0, 0.5),
+                inset 0 0 60px rgba(0, 255, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .header {
+            background: #00ff00;
+            color: #000;
+            padding: 10px 20px;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #00ff00;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            background: #000;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+        
+        .chat-window {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #000;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+        
+        .chat-window::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        .chat-window::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        
+        .chat-window::-webkit-scrollbar-thumb {
+            background: #00ff00;
+            border: 2px solid #000;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            animation: typeIn 0.3s ease-in;
+        }
+        
+        @keyframes typeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message-header {
+            color: #ffff00;
+            margin-bottom: 5px;
+        }
+        
+        .message-content {
+            color: #00ff00;
+            padding-left: 20px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.6;
+        }
+
+        .message-content p {
+            margin: 10px 0;
+        }
+        
+        .message-content ul, .message-content ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .message-content li {
+            margin: 5px 0;
+        }
+        
+        .system-message {
+            color: #00aaff;
+            font-style: italic;
+        }
+        
+        .error-message {
+            color: #ff0000;
+        }
+        
+        .source-info {
+            color: #ff00ff;
+            font-size: 16px;
+            margin-top: 10px;
+            padding-left: 20px;
+            border-left: 2px solid #ff00ff;
+        }
+        
+        .input-area {
+            background: #0a0a0a;
+            padding: 20px;
+            border-top: 4px solid #00ff00;
+        }
+        
+        .mode-selector {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        
+        .mode-selector label {
+            color: #ffff00;
+            font-size: 18px;
+        }
+        
+        .mode-selector select {
+            background: #000;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 5px 10px;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        
+        .mode-selector select:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            background: #000;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 10px 15px;
+            font-family: 'VT323', monospace;
+            font-size: 18px;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        input[type="text"]::placeholder {
+            color: #006600;
+        }
+        
+        button {
+            background: #00ff00;
+            color: #000;
+            border: none;
+            padding: 10px 30px;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        
+        button:hover {
+            background: #00cc00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+        }
+        
+        button:active {
+            transform: scale(0.95);
+        }
+        
+        button:disabled {
+            background: #003300;
+            color: #006600;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        .boot-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            color: #00ff00;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            animation: fadeOut 3s forwards;
+            animation-delay: 2s;
+        }
+
+        .boot-art {
+            margin-top: 0;
+            margin-bottom: 0;
+            line-height: 1.05;
+            transform: scale(0.7);
+            transform-origin: center;
+            padding: 0;
+        }
+        
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+        
+        .boot-text {
+            font-size: 20px;
+            text-align: center;
+        }
+        
+        .boot-text div {
+            animation: typeWriter 0.5s steps(40) forwards;
+            opacity: 0;
+        }
+        
+        .boot-text div:nth-child(1) { animation-delay: 0s; }
+        .boot-text div:nth-child(2) { animation-delay: 0.6s; }
+        .boot-text div:nth-child(3) { animation-delay: 1.2s; }
+        .boot-text div:nth-child(4) { animation-delay: 1.8s; }
+        
+        @keyframes typeWriter {
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<body>
+    <div class="crt-overlay"></div>
+    
+    <div class="container">
+        <div class="boot-screen">
+            <div class="boot-text">
+                <div>SAUL...Rataalada v1.1</div>
+                <div>INITIALIZING SYSTEM...</div>
+                <div>LOADING KNOWLEDGE BASE...</div>
+                <div class="boot-art">
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠛⣋⣭⣭⣤⣤⣬⣥⠄⠀⠨⠙⠛⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢟⣵⠖⠋⠉⠉⠉⠉⠉⠉⠉⠀⠀⠀⠈⠳⢦⣝⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⣡⠏⠁⠀⣠⣶⣶⣶⣶⣦⣠⠀⠀⠀⠀⠀⠀⢠⡙⣆⠙⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠁⡴⠋⠀⠀⣾⣿⣿⣿⣿⣿⣿⣿⣷⣴⡀⠀⠀⠀⢼⣿⢿⣦⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠇⡰⠃⠀⠀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣄⠀⠀⠘⣿⡄⠹⠸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⢰⠃⠀⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⠻⣿⠉⣷⡄⠀⢻⣇⢠⡄⢹⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⠀⣦⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡀⠀⢹⡇⠀⢸⣿⢾⣷⢠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣇⠀⠀⠀⠀⣿⣿⠿⢿⣿⣿⣿⣿⣼⣿⣿⣿⣧⣦⡼⠁⠀⣼⣿⢸⣿⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠠⠀⠀⢸⡟⢁⡄⢀⣀⡈⠙⠛⣾⠈⠻⠛⠁⣀⣀⡀⠀⠻⣿⠐⠿⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠀⠀⠀⣼⣷⣞⣁⠀⠀⠀⢀⣾⣿⠃⠀⠀⢀⣤⡉⠀⠀⠀⣿⣆⡀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠀⠀⠀⢸⣿⣿⣿⣿⣷⢆⣰⣿⣿⡄⠀⠀⠈⣿⣿⣦⣄⠀⢸⠟⢃⠠⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⠀⣿⣿⣿⣿⣷⣿⣿⣿⣿⠇⠀⠀⠀⠘⣿⣿⣿⠀⣿⡀⢄⡀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣆⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣧⠀⠀⠀⠀⣿⣿⠃⠀⣿⣿⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⡄⢀⢻⣿⣿⣿⣿⣿⣿⣶⡌⠉⠀⠀⠀⠐⢿⡇⠘⠃⢿⣿⠀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⡿⣿⣿⣿⢿⣿⣿⣿⡇⢺⡧⠠⠂⠀⠀⠀⠀⠀⣛⠃⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⠑⢿⢿⣿⣦⣤⣤⣤⣤⣀⣄⠀⠀⠀⠀⠄⠘⢀⡀⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠀⠈⣿⣿⣿⣿⣿⣯⣤⣼⣿⣤⠀⠀⠀⠀⠀⠈⠀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠟⠓⠀⠀⠈⠋⠙⣿⣿⣿⣿⠿⢿⠋⠀⠀⠀⠀⠀⠀⡇⠠⡝⠛⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⣿⣿⣿⣿⣿⡿⠟⠛⠋⠉⠉⠀⠀⠀⠀⠀⠀⣄⠀⢈⡈⠙⣋⢁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠇⠀⣿⡍⠁⢀⣙⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿
+                    ⡿⠟⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣷⣤⡙⠿⣿⣯⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠃⠀⠀⠈⠉⠁⠐⠻⣿⣿⣿⣿⣿⣿
+                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⣶⣌⠙⠿⠿⠁⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⢿⣿⣿
+                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⣿⣿⣿⣿⠗⢀⡠⠊⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈
+                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣿⡿⠃⠀⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠸⠋⠀⠀⡀⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                    ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠃⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                </div>
+            </div>
+        </div>
+        
+        <div class="header">
+            <div class="header-title">
+                <span>⚖ SAUL...Rataalada v1.1</span>
+                <div class="status-indicator"></div>
+            </div>
+            <span>v1.1</span>
+        </div>
+        
+        <div class="chat-window" id="chatWindow">
+            <div class="message system-message">
+                <div class="message-header">[SYSTEM]</div>
+                <div class="message-content">SAULuh welcomes you.
+Select mode and start chatting...</div>
+            </div>
+        </div>
+        
+        <div class="input-area">
+            <div class="mode-selector">
+                <label for="modeSelect">MODE:</label>
+                <select id="modeSelect">
+                    <option value="skim">SKIM - Index Website</option>
+                    <option value="ask">ASK - Query Knowledge Base</option>
+                </select>
+            </div>
+            
+            <div class="input-group">
+                <input 
+                    type="text" 
+                    id="inputField" 
+                    placeholder="Enter URL or query..."
+                    autocomplete="off"
+                />
+                <button id="submitBtn" onclick="handleSubmit()">EXECUTE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - UPDATE THIS WITH YOUR API BASE URL
+        const API_BASE_URL = 'http://127.0.0.1:8080/sauluhAI/v1';  // Change this to your FastAPI URL
+        
+        const chatWindow = document.getElementById('chatWindow');
+        const inputField = document.getElementById('inputField');
+        const modeSelect = document.getElementById('modeSelect');
+        const submitBtn = document.getElementById('submitBtn');
+
+        // Format message content with proper HTML
+        function formatMessageContent(text) {
+            if (!text) return '';
+            
+            // CRITICAL: First replace literal \n with actual newlines
+            text = text.replace(/\\n/g, '\n');
+            text = text.replace(/\\r/g, '');
+            text = text.replace(/\\t/g, '    ');
+            
+            // Escape HTML to prevent XSS
+            text = text.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;');
+            
+            // Convert markdown-style formatting
+            text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
+            
+            // Split into lines for processing
+            let lines = text.split('\n');
+            let html = '';
+            let inList = false;
+            let inOrderedList = false;
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i].trim();
+                
+                // Empty line = paragraph break
+                if (!line) {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    if (inOrderedList) {
+                        html += '</ol>';
+                        inOrderedList = false;
+                    }
+                    html += '<br>';
+                    continue;
+                }
+                
+                // Bullet list
+                if (line.match(/^[-*•]\s+/)) {
+                    if (!inList) {
+                        html += '<ul>';
+                        inList = true;
+                    }
+                    html += '<li>' + line.replace(/^[-*•]\s+/, '') + '</li>';
+                }
+                // Numbered list
+                else if (line.match(/^\d+\.\s+/)) {
+                    if (!inOrderedList) {
+                        html += '<ol>';
+                        inOrderedList = true;
+                    }
+                    html += '<li>' + line.replace(/^\d+\.\s+/, '') + '</li>';
+                }
+                // Regular paragraph
+                else {
+                    if (inList) {
+                        html += '</ul>';
+                        inList = false;
+                    }
+                    if (inOrderedList) {
+                        html += '</ol>';
+                        inOrderedList = false;
+                    }
+                    html += line + '<br>';
+                }
+            }
+            
+            // Close any open lists
+            if (inList) html += '</ul>';
+            if (inOrderedList) html += '</ol>';
+            
+            return html;
+        }
+        
+        // Update placeholder based on mode
+        modeSelect.addEventListener('change', () => {
+            if (modeSelect.value === 'skim') {
+                inputField.placeholder = 'Enter website URL to index...';
+            } else {
+                inputField.placeholder = 'Enter your legal question...';
+            }
+        });
+        
+        // Handle Enter key
+        inputField.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                handleSubmit();
+            }
+        });
+        
+        function addMessage(header, content, isError = false, sources = null) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isError ? 'error-message' : ''}`;
+            
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'message-header';
+            headerDiv.textContent = header;
+            
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'message-content';
+            contentDiv.textContent = content;
+            
+            messageDiv.appendChild(headerDiv);
+            messageDiv.appendChild(contentDiv);
+            
+            // Add sources if available
+            if (sources && sources.length > 0) {
+                const sourcesDiv = document.createElement('div');
+                sourcesDiv.className = 'source-info';
+                sourcesDiv.innerHTML = '<strong>SOURCES:</strong><br>';
+                sources.forEach((source, idx) => {
+                    sourcesDiv.innerHTML += `${idx + 1}. ${source.url} (Score: ${source.relevance_score})<br>`;
+                });
+                messageDiv.appendChild(sourcesDiv);
+            }
+            
+            chatWindow.appendChild(messageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+        
+        function setLoading(isLoading) {
+            submitBtn.disabled = isLoading;
+            submitBtn.textContent = isLoading ? 'PROCESSING...' : 'EXECUTE';
+            inputField.disabled = isLoading;
+            modeSelect.disabled = isLoading;
+        }
+        
+        async function handleSubmit() {
+            const input = inputField.value.trim();
+            const mode = modeSelect.value;
+            
+            if (!input) {
+                addMessage('[ERROR]', 'Input cannot be empty.', true);
+                return;
+            }
+            
+            // Show user input
+            addMessage('[USER]', input);
+            inputField.value = '';
+            setLoading(true);
+            
+            try {
+                if (mode === 'skim') {
+                    await handleSkim(input);
+                } else {
+                    await handleAsk(input);
+                }
+            } catch (error) {
+                addMessage('[ERROR]', `System error: ${error.message}`, true);
+            } finally {
+                setLoading(false);
+            }
+        }
+        
+        async function handleSkim(url) {
+            addMessage('[SYSTEM]', `Indexing website: ${url}
+Please wait...`, false);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/scrap?url=${encodeURIComponent(url)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to index website');
+                }
+                
+                const data = await response.json();
+                
+                addMessage(
+                    '[SAUL]', 
+                    `Website indexed successfully!
+
+Status: ${data.status}
+Chunks uploaded: ${data.uploaded_chunks}
+
+The knowledge base has been updated. You can now ask questions about this content.`
+                );
+                
+            } catch (error) {
+                addMessage('[ERROR]', `Failed to index website: ${error.message}`, true);
+            }
+        }
+
+        function decodeHtmlEntities(str) {
+            const textarea = document.createElement("textarea");
+            textarea.innerHTML = str;
+            return textarea.value;
+        }
+        
+        async function handleAsk(query) {
+            addMessage('[SYSTEM]', 'Searching knowledge base...', false);
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/ask?query=${encodeURIComponent(query)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Failed to process query');
+                }
+                
+                const data = await response.text();
+                let raw = data;
+                raw = raw.replace(/\\n/g, "\n");
+                raw = raw
+                        .replace(/\\t/g, "    ")
+                        .replace(/\\"/g, '"')
+                        .replace(/\\-/g, "-");
+                
+                raw = decodeHtmlEntities(raw);
+
+                raw = raw.replace(/<\/?[^>]+>/g, "");
+
+                // Step 4: Fix spacing caused by removed tags
+                raw = raw
+                    .replace(/\n{3,}/g, "\n\n")  // limit blank lines
+                    .trim();
+
+                // Step 5: Convert Markdown bullets to readable text
+                raw = raw
+                    .replace(/^\s*[-*+]\s+/gm, "• ")     // convert markdown bullets
+                    .replace(/^\s*\d+\.\s+/gm, "$&");
+
+                // const htmlAnswer = marked.parse(raw, {
+                //     breaks: true,
+                //     gfm: true
+                // });
+
+                // let formattedAnswer = data.replace(/\n/g, '<br>');
+                
+                // Format the answer
+                let answer = raw || 'No answer generated.';
+                
+//                 // // Add metadata
+//                 // if (data.retrieved_chunks) {
+//                 //     answer += `
+
+// [Retrieved ${data.retrieved_chunks} relevant chunk(s) from knowledge base]`;
+//                 }
+                
+                addMessage('[SAUL]', answer, false, data.sources);
+                
+            } catch (error) {
+                addMessage('[ERROR]', `Query failed: ${error.message}`, true);
+            }
+        }
+        
+        // Easter egg: typing animation
+        let konamiCode = [];
+        const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.key);
+            konamiCode = konamiCode.slice(-10);
+            
+            if (konamiCode.join(',') === konamiSequence.join(',')) {
+                addMessage('[SYSTEM]', '🎮 CHEAT CODE ACTIVATED! You found the secret.', false);
+                konamiCode = [];
+            }
+        });
+    </script>
+</body>
+</html>
