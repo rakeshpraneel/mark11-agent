@@ -1,5 +1,5 @@
 # Use a lightweight Python base image
-FROM python:3.10-slim-buster
+FROM rocky03/saul-agent-custom-base:1.0.0
 
 
 WORKDIR /app
