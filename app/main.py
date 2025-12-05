@@ -42,7 +42,7 @@ async def home_page(request: Request):
         name="legal_conversation.html", 
         context={
             "request": request,
-            "api_url": f"{settings.SERVER_SIDE_CALL}:8080/sauluhAI/v1"
+            "api_url": f"{settings.CLIENT_SIDE_CALL}:8080/sauluhAI/v1"
         }
     )
 
