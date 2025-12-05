@@ -18,7 +18,6 @@ RUN ollama serve & \
     OLLAMA_PID=$! && \
     sleep 5 && \
     ollama pull llama3.1:8b && \
-    ollama pull nomic-embed-text:latest && \
-    kill $OLLAMA_PID
+    ollama pull nomic-embed-text:latest
 
 ENV OLLAMA_HOST=0.0.0.0
