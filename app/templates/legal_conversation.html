@@ -410,7 +410,10 @@ Select mode and start chatting...</div>
 
     <script>
         // Configuration - UPDATE THIS WITH YOUR API BASE URL
-        const API_BASE_URL = 'http://127.0.0.1:8080/sauluhAI/v1';  // Change this to your FastAPI URL
+        // const API_BASE_URL = 'http://127.0.0.1:8080/sauluhAI/v1';  // LocalTesting
+
+        const API_BASE_URL = '{{ api_url }}';
+        // console.log("API Base URL:", API_BASE_URL);
         
         const chatWindow = document.getElementById('chatWindow');
         const inputField = document.getElementById('inputField');
