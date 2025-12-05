@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.templating import Jinja2Templates
+from fastapi import Request
 from starlette.responses import FileResponse
 from contextlib import asynccontextmanager
 import uvicorn
@@ -8,6 +10,7 @@ import uvicorn
 import app.core.api_setup as api_setup
 import app.agent.run_agent as run_agent
 from app.routers import chat,learn,scraper,query 
+from app.core.settings import settings
 
 @asynccontextmanager
 async def lifespan(_app = FastAPI):
@@ -31,9 +34,17 @@ app.add_middleware(
     allow_headers=["*"], # Allows all headers
 )
 
+ui = Jinja2Templates(directory="app/templates")
+
 @app.get("/")
-async def home_page():
-    return FileResponse('app/templates/legal_conversation.html')
+async def home_page(request: Request):
+    return ui.TemplateResponse(
+        name="legal_conversation.html", 
+        context={
+            "request": request,
+            "api_url": f"{settings.SERVER_SIDE_CALL}:8080/sauluhAI/v1"
+        }
+    )
 
 
 if __name__ == '__main__':

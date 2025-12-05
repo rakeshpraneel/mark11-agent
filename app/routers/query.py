@@ -11,6 +11,7 @@ import app.agent.run_agent as run_agent
 from app.utility.chunker import simple_chunk_text
 from app.utility.rag_tool import search
 from app.utility.response_formatter import *
+from app.core.settings import settings
 
 router = APIRouter()
 
@@ -41,7 +42,7 @@ async def generate_with_ollama(model, prompt):
     """
     async with aiohttp.ClientSession() as session:
         async with session.post(
-            f"http://localhost:11434/api/generate",
+            f"{settings.SERVER_SIDE_CALL}:11434/api/generate",
             json={
                 "model": model,
                 "prompt": prompt,
@@ -54,6 +55,7 @@ async def generate_with_ollama(model, prompt):
                 data = await response.json()
                 return data["response"]
             else:
+                # print(await response.json())
                 raise Exception(f"Ollama generation failed: {response.status}")
 
 @router.post("/ask",summary="What saul has learnt ?",

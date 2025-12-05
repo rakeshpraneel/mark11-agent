@@ -7,5 +7,7 @@ class Settings(BaseSettings):
     DB_URL: str = ""
     QDRANT_CLUSTER: str =""
     QDRANT_API_KEY: str =""
+    SERVER_SIDE_CALL: str = ""
+    CLIENT_SIDE_CALL: str = ""
 
 settings = Settings()

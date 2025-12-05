@@ -3,7 +3,7 @@ from typing import List
 
 from app.core.settings import settings
 
-OLLAMA_BASE_URL = "http://localhost:11434"  # Default Ollama URL
+OLLAMA_BASE_URL = f"{settings.SERVER_SIDE_CALL}:11434"  # Default Ollama URL
 EMBED_MODEL = "nomic-embed-text"
 
 async def embed_with_ollama(texts: list[str]) -> list[list[float]]:
