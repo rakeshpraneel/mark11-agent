@@ -9,7 +9,7 @@ import uvicorn
 
 import app.core.api_setup as api_setup
 import app.agent.run_agent as run_agent
-from app.routers import chat,learn,scraper,query 
+from app.routers import chat,learn,scraper,query,test 
 from app.core.settings import settings
 
 @asynccontextmanager
@@ -25,6 +25,7 @@ app.include_router(chat.router, prefix="/sauluhAI/v1",tags=["Want to bail out ?"
 app.include_router(learn.router, prefix="/sauluhAI/v1",tags=["Want to bail out ?"])
 app.include_router(scraper.router, prefix="/sauluhAI/v1",tags=["Want to skim legal codes ?"])
 app.include_router(query.router, prefix="/sauluhAI/v1",tags=["Want to know about legal codes ?"])
+app.include_router(test.router, prefix="/sauluhAI/v1",tags=["Test model"])
 
 app.add_middleware(
     CORSMiddleware,
