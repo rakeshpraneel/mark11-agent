@@ -17,7 +17,9 @@ RUN curl -fsSL https://ollama.com/install.sh | sh
 RUN ollama serve & \
     OLLAMA_PID=$! && \
     sleep 5 && \
-    ollama pull llama3.1:8b && \
+    # ollama pull llama3.1:8b && \
+    # ollama pull tinyllama:1.1b && \
+    ollama llama3.1:8b-instruct-q4_0 && \
     ollama pull nomic-embed-text:latest
 
 ENV OLLAMA_HOST=0.0.0.0

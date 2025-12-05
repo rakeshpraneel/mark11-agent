@@ -14,12 +14,12 @@ done
 
 # Pull models if they do not exist
 echo "Checking models..."
-if ! ollama list | grep -q "llama3.1:8b"; then
-    echo "Pulling llama3.1:8b (this will take several minutes)..."
-    ollama pull llama3.1:8b
-    echo "llama3.1:8b downloaded!"
+if ! ollama list | grep -q "tinyllama:1.1b"; then
+    echo "Pulling tinyllama:1.1b (this will take several minutes)..."
+    ollama pull tinyllama:1.1b
+    echo "tinyllama:1.1b downloaded!"
 else
-    echo "llama3.1:8b already exists"
+    echo "tinyllama:1.1b already exists"
 fi
 
 if ! ollama list | grep -q "nomic-embed-text"; then

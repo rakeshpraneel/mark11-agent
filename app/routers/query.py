@@ -124,7 +124,7 @@ async def ask_to_agent(query: str):
                 Answer:"""
 
         # Generate with Gemini Flash
-        model = "llama3.1:8b"
+        model = "llama3.1:8b-instruct-q4_0"
         response = await generate_with_ollama(model, prompt)
 
         response = clean_and_format_response(response)
