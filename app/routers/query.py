@@ -106,11 +106,13 @@ async def ask_to_agent(query: str):
                 Instructions:
                 - Provide a clear and accurate answer based on the context above
                 - If the context doesn't fully answer the question, acknowledge what information is missing
-                - Reference sources when making specific claims (e.g., "According to Source 1...")
+                - Reference sources when making specific claims (e.g., "According to Source 1 and add reference url...")
                 - Be concise but thorough
                 - If sources contradict each other, mention both perspectives.
                 - Add the reference urls for both the context that you are claiming as well as for the context from knowledge base.
                 - Add the reference urls to your answer only if it is fetched from that or else not required.
+                - Extract the mail ids or contact numbers/contact names and display it at the last, stating as POC.
+                - Add POC only if the sources has any or don't add POC field.
 
                 Formatting Rules:
                 - Use proper paragraphs with blank lines between them
@@ -119,12 +121,13 @@ async def ask_to_agent(query: str):
                 - Bold important terms by wrapping in **text**
                 - Cite sources naturally: "According to Source 1, ..."
                 - Keep paragraphs concise (3-4 sentences max)
+                
 
 
                 Answer:"""
 
-        # Generate with Gemini Flash
-        model = "llama3.1:8b-instruct-q4_0"
+        # local model
+        model = "llama3.2:3b"
         response = await generate_with_ollama(model, prompt)
 
         response = clean_and_format_response(response)

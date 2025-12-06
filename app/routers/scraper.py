@@ -17,6 +17,7 @@ async def scrap_with_agent(url: str):
     # Simple website fetch; for large sites, build async crawler
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as resp:
+            # print(await resp.json())
             if resp.status != 200:
                 raise HTTPException(status_code=400, detail=f"Failed to fetch {url}")
             html = await resp.text()
