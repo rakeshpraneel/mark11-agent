@@ -127,7 +127,8 @@ async def ask_to_agent(query: str):
                 Answer:"""
 
         # local model
-        model = "llama3.2:3b"
+        # model = "llama3.2:3b"
+        model = "llama3.2:1b"
         response = await generate_with_ollama(model, prompt)
 
         response = clean_and_format_response(response)
