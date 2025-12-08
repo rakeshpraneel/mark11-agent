@@ -95,7 +95,7 @@ async def ask_to_agent(query: str):
 
         print(f"context:: {context}")
         
-        # Step 3: Generate answer using Gemini
+        
         prompt = f"""You are a knowledgeable assistant, called SAUL. Answer the user's question based on the context provided from a knowledge base.
 
                 Context from knowledge base:
@@ -104,11 +104,18 @@ async def ask_to_agent(query: str):
                 User Question: {query}
 
                 Instructions:
-                - Provide a clear and accurate answer based on the context above
-                - If the context doesn't fully answer the question, acknowledge what information is missing
-                - Reference sources when making specific claims (e.g., "According to Source 1 and add reference url...")
+                - Provide a clear and accurate answer based on the context above.
+                - If the question is pin pointed then make sure to answer it precisely.
+                - Let's say when was "Indian Penal Code published" is the question then answer it like "Indian penal code was published in certain year."
+                - If the context doesn't fully answer the question, acknowledge what information is missing.
+                - Sources should be only of reference url. Mention Source number and its url.
+                - Do not mention according to source if the source reference url is not available for the context.
+                - Don't mention the Source number or refer to any source, only if there is reference url.
+                - Skip the source citing, if the source doesn't has any reference urls.
+                - Mention the sources at the end of the response under the title sources used. (refer to sample output for structure)
                 - Be concise but thorough
                 - If sources contradict each other, mention both perspectives.
+                - At the end of the response add the source numbers for the claims made and respective reference url.
                 - Add the reference urls for both the context that you are claiming as well as for the context from knowledge base.
                 - Add the reference urls to your answer only if it is fetched from that or else not required.
                 - Extract the mail ids or contact numbers/contact names and display it at the last, stating as POC.
@@ -119,16 +126,34 @@ async def ask_to_agent(query: str):
                 - Use bullet points (with - or *) for lists
                 - Use numbered lists (1. 2. 3.) when showing steps
                 - Bold important terms by wrapping in **text**
-                - Cite sources naturally: "According to Source 1, ..."
+                - Cite source urls like: Source 1: "<source url>..."
+                - Cite the source urls point by point.
                 - Keep paragraphs concise (3-4 sentences max)
+                - Refer to sample output and produce the output in similar format.
+
+                Sample Input:
+                    "What is Confluent ?"
+                Sample output:
                 
+                    "Confluence is a collaborative platform designed to help teams communicate, manage projects, and document workflows in real-time. It integrates seamlessly with other tools within an organization's ecosystem.
+
+                    Confluence can be utilized in diverse environments such as:
+                        • Project Management
+                        • Content Collaboration
+                        • Document Sharing
+
+                    Sources Used:
+                    1. Source 1: https://www.kolekti.com/resources/guides/create-the-best-confluence-pages - Provides insights into how Confluence can be used for organizing content, using macros, and creating better pages.
+                    2. Source 2: https://www.kolekti.com/resources/guides/create-the-best-confluence-pages - Offers advice on enhancing the design of Confluence pages by changing text color and styles.
+                    3. Source 4: https://www.kolekti.com/resources/guides/create-the-best-confluence-pages - Explains how to use templates in Confluence and adding the anchor macro.
+                    4. Source 5: https://www.kolekti.com/resources/guides/create-the-best-confluence-pages - Highlights additional features like Smart Designer and content formatting macros.
 
 
                 Answer:"""
 
         # local model
         # model = "llama3.2:3b"
-        model = "llama3.2:1b"
+        model = "qwen2.5:1.5b"
         response = await generate_with_ollama(model, prompt)
 
         response = clean_and_format_response(response)
