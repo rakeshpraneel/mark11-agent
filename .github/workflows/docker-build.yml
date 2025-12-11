@@ -3,6 +3,7 @@ name: Docker Build and Publish
 on:
   push:
     branches: [ "master" ]
+    bracnhes: [ "saulv1.2" ]
 
 jobs:
 
