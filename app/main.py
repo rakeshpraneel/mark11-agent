@@ -15,7 +15,7 @@ from app.core.settings import settings
 @asynccontextmanager
 async def lifespan(_app = FastAPI):
     api_setup.initiate()
-    await run_agent.run_agent()
+    # await run_agent.run_agent()
     yield
 
 

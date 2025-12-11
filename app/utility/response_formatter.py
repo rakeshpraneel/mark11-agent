@@ -31,9 +31,11 @@ def clean_and_format_response(text: str) -> str:
         '\\"': '"',
         "\\'": "'",
         '\\\\': '\\',
+        '**': ''
     }
     
     for escaped, actual in escape_map.items():
+        print(actual)
         text = text.replace(escaped, actual)
     
     # Step 3: Remove common artifacts

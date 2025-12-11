@@ -1,5 +1,5 @@
 # Use a lightweight Python base image
-FROM rocky03/saul-agent-custom-base:1.0.0
+FROM rocky03/saul-agent-custom-base:1.0.1
 
 RUN apt-get update && apt-get install -y \
     supervisor \

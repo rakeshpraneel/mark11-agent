@@ -391,7 +391,7 @@ Select mode and start chatting...</div>
             <div class="mode-selector">
                 <label for="modeSelect">MODE:</label>
                 <select id="modeSelect">
-                    <option value="skim">SKIM - Index Website</option>
+                    <!-- <option value="skim">SKIM - Index Website</option> -->
                     <option value="ask">ASK - Query Knowledge Base</option>
                 </select>
             </div>
@@ -400,7 +400,7 @@ Select mode and start chatting...</div>
                 <input 
                     type="text" 
                     id="inputField" 
-                    placeholder="Enter URL or query..."
+                    placeholder="Start chatting..."
                     autocomplete="off"
                 />
                 <button id="submitBtn" onclick="handleSubmit()">EXECUTE</button>
@@ -417,7 +417,7 @@ Select mode and start chatting...</div>
         
         const chatWindow = document.getElementById('chatWindow');
         const inputField = document.getElementById('inputField');
-        const modeSelect = document.getElementById('modeSelect');
+        // const modeSelect = document.getElementById('modeSelect');
         const submitBtn = document.getElementById('submitBtn');
 
         // Format message content with proper HTML
@@ -500,11 +500,11 @@ Select mode and start chatting...</div>
         
         // Update placeholder based on mode
         modeSelect.addEventListener('change', () => {
-            if (modeSelect.value === 'skim') {
-                inputField.placeholder = 'Enter website URL to index...';
-            } else {
+            // if (modeSelect.value === 'skim') {
+                // inputField.placeholder = 'Enter website URL to index...';
+            // } else {
                 inputField.placeholder = 'Enter your legal question...';
-            }
+            // }
         });
         
         // Handle Enter key
@@ -566,11 +566,11 @@ Select mode and start chatting...</div>
             setLoading(true);
             
             try {
-                if (mode === 'skim') {
-                    await handleSkim(input);
-                } else {
+            //     if (mode === 'skim') {
+            //         await handleSkim(input);
+            //     } else {
                     await handleAsk(input);
-                }
+            //     }
             } catch (error) {
                 addMessage('[ERROR]', `System error: ${error.message}`, true);
             } finally {

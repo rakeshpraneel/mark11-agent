@@ -6,6 +6,7 @@ import datetime
 import uuid
 import google.generativeai as genai
 import re
+import requests
 
 import app.agent.run_agent as run_agent
 from app.utility.chunker import simple_chunk_text
@@ -60,126 +61,124 @@ async def generate_with_ollama(model, prompt):
 
 @router.post("/ask",summary="What saul has learnt ?",
              description="Shoot out the question, saul will answer using the knowledge obtained through scraper")
-async def ask_to_agent(query: str):
+async def ask_to_agent(query: str, request: Request):
     try:
-        result = await search(query=query)
+        # result = await search(query=query)
 
-        print(f"result::: {result}")
+        # print(f"result::: {result}")
 
-        if not result:
-            return "Sauluh is clueless....."
+        # if not result:
+        #     return "Sauluh is clueless....."
 
-        context_parts = []
-        sources = []
+        # context_parts = []
+        # sources = []
             
-        for idx, result in enumerate(result, 1):
-            chunk_text = result["payload"].get("text", "")
-            source_url = result["payload"].get("source_url", "Unknown")
-            chunk_index = result["payload"].get("chunk_index", "N/A")
-            score = result["score"]
+        # for idx, result in enumerate(result, 1):
+        #     chunk_text = result["payload"].get("text", "")
+        #     source_url = result["payload"].get("source_url", "Unknown")
+        #     chunk_index = result["payload"].get("chunk_index", "N/A")
+        #     score = result["score"]
             
-            # Add to context with source number
-            context_parts.append(f"[Source {idx}] (Relevance: {score:.2f})\n{chunk_text}")
+        #     # Add to context with source number
+        #     context_parts.append(f"[Source {idx}] (Relevance: {score:.2f})\n{chunk_text}")
             
-            # Collect source information
+        #     # Collect source information
             
-            sources.append({
-                "source_number": idx,
-                "url": source_url,
-                "chunk_index": chunk_index,
-                "relevance_score": round(score, 3),
-                "preview": chunk_text
-            })
+        #     sources.append({
+        #         "source_number": idx,
+        #         "url": source_url,
+        #         "chunk_index": chunk_index,
+        #         "relevance_score": round(score, 3),
+        #         "preview": chunk_text
+        #     })
         
-        context = "\n\n".join(context_parts)
+        # context = "\n\n".join(context_parts)
 
-        print(f"context:: {context}")
+        # print(f"context:: {context}")
         
         
-        prompt = f"""You are a knowledgeable assistant, called SAUL. Answer the user's question based on the context provided from a knowledge base.
+        prompt = f"""You are a knowledgeable and context-grounded assistant, Saul. Optimized for Retrieval-Augmented Generation (RAG).
+                ****
+                Your job is to **answer the user’s question in the way mentioned below**.
+                ---
+                ## **User Question:**
+                {query}
+                ---
+                ## **Response Instructions (Strict):**
+                ### **1. Grounding & Accuracy**
+                * If the question is very specific (e.g., *“When was the Indian Penal Code published?”*), give a precise answer:
+                → **“The Indian Penal Code was published in <year>.”**
+                ### **2. Missing Information**
+                * If you are unable to find full answer for the question, explicitly state what is missing.
+                * Never hallucinate facts.
+                ### **3. Sources & Citation Rules**
+                * Add urls from which the data was collected.
+                * List sources at the end under a separate heading **“Sources Used:”**
+                * Format each source as:
+                `1. Source <number>: "<url>
+                * Cite **only the URLs used to justify claims**, not all search results.
+                * If sources contradict each other, mention both perspectives.
+                ### **4. POC Extraction**
+                * If the search result contains **emails, phone numbers, or contact names**, extract them and list them under **“POC:”**
+                * If none exist, **do not include a POC section**.
 
-                Context from knowledge base:
-                {context}
+                ### **5. Formatting Requirements**
 
-                User Question: {query}
-
-                Instructions:
-                - Provide a clear and accurate answer based on the context above.
-                - If the question is pin pointed then make sure to answer it precisely.
-                - Let's say when was "Indian Penal Code published" is the question then answer it like "Indian penal code was published in certain year."
-                - If the context doesn't fully answer the question, acknowledge what information is missing.
-                - Sources should be only of reference url. Mention Source number and its url.
-                - Do not mention according to source if the source reference url is not available for the context.
-                - Don't mention the Source number or refer to any source, only if there is reference url.
-                - Skip the source citing, if the source doesn't has any reference urls.
-                - Mention the sources at the end of the response under the title sources used. (refer to sample output for structure)
-                - Be concise but thorough
-                - If sources contradict each other, mention both perspectives.
-                - At the end of the response add the source numbers for the claims made and respective reference url.
-                - Add the reference urls for both the context that you are claiming as well as for the context from knowledge base.
-                - Add the reference urls to your answer only if it is fetched from that or else not required.
-                - Extract the mail ids or contact numbers/contact names and display it at the last, stating as POC.
-                - Add POC only if the sources has any or don't add POC field.
-
-                Formatting Rules:
-                - Use proper paragraphs with blank lines between them
-                - Use bullet points (with - or *) for lists
-                - Use numbered lists (1. 2. 3.) when showing steps
-                - Bold important terms by wrapping in **text**
-                - Cite source urls like: Source 1: "<source url>..."
-                - Cite the source urls point by point.
-                - Keep paragraphs concise (3-4 sentences max)
-                - Refer to sample output and produce the output in similar format.
-
-                Sample Input:
-                    "What is Confluent ?"
-                Sample output:
-                
-                    "Confluence is a collaborative platform designed to help teams communicate, manage projects, and document workflows in real-time. It integrates seamlessly with other tools within an organization's ecosystem.
-
-                    Confluence can be utilized in diverse environments such as:
-                        • Project Management
-                        • Content Collaboration
-                        • Document Sharing
-
-                    Sources Used:
-                    1. Source 1: https://www.kolekti.com/resources/guides/create-the-best-confluence-pages - Provides insights into how Confluence can be used for organizing content, using macros, and creating better pages.
-                    2. Source 2: https://www.kolekti.com/resources/guides/create-the-best-confluence-pages - Offers advice on enhancing the design of Confluence pages by changing text color and styles.
-                    3. Source 4: https://www.kolekti.com/resources/guides/create-the-best-confluence-pages - Explains how to use templates in Confluence and adding the anchor macro.
-                    4. Source 5: https://www.kolekti.com/resources/guides/create-the-best-confluence-pages - Highlights additional features like Smart Designer and content formatting macros.
-
-
-                Answer:"""
+                * Use short paragraphs (max 3–4 sentences each).
+                * Use bullet points (`-` or `•`) for lists.
+                * Use numbered lists only when describing steps.
+                * Bold important terms using `**` … `**`.
+                * Keep the answer concise but complete.
+                * Add blank lines between paragraphs.
+                * Follow the same structure and clarity as the sample output.
+                ---
+                ## **Output Structure (Strictly Follow This):**
+                ```
+                <Concise direct answer fetched from search result>
+                <Additional explanation in short paragraphs>
+                <Sources Used:>
+                1. Source 1: "<url>" – Explanation
+                2. Source 2: "<url>" – Explanation
+                (Include only if URLs exist)
+                <POC:>
+                - <name / email / phone> 
+                (Include only if applicable)
+                ```
+                ---
+                ## **Sample Style Reference**
+                (Do not repeat this in the final answer — this is just for stylistic alignment.)
+                ```
+                Confluence is a collaborative platform designed to help teams document workflows, share knowledge, and manage projects in real-time. It integrates well with organizational ecosystems.
+                Confluence is typically used for:
+                • Project management
+                • Content collaboration
+                • Documentation workflows
+                Sources Used:
+                1. Source 1: https://example1.com – Provides insights on organizing content.
+                2. Source 2: https://example2.com – Describes page structure improvements.
+                ```
+                ---
+                ## **Now produce the final answer following all instructions.**
+                """
 
         # local model
         # model = "llama3.2:3b"
-        model = "qwen2.5:1.5b"
-        response = await generate_with_ollama(model, prompt)
-
-        response = clean_and_format_response(response)
-        answer = format_sources_citation(response,sources)
-
-        answer = format_lists(answer)
-        answer = format_to_human_readable(answer)
         
-        
-        # answer = response.encode().decode('unicode_escape')
+        await run_agent.run_agent(prompt)
 
-        
-        
-        print( {
-            "query": query,
-            "answer": answer,
-            "sources": sources,
-            "retrieved_chunks": len(result)
-        })
+        client_host = request.client.host
 
-        # final_source = " Ref url: "
+        try:
+            response = await run_agent.process_msg(query, client_host)
 
-        # for source in sources:
-        #     final_source += source.get('url') +', '
+            answer = clean_and_format_response(response)
+            # # answer = format_sources_citation(response,sources)
 
-        return answer
+            # answer = format_lists(answer)
+            # answer = format_to_human_readable(answer)
+            return JSONResponse(status_code=200, content=str(answer))
+        except Exception as e:
+            return HTTPException(status_code=500, detail=str(e))
     
     except Exception as e:
         print(f"Error in ask_to_agent: {e}")
