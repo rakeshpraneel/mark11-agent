@@ -9,7 +9,7 @@ WORKDIR /app
 
 # moving required files
 COPY requirements.txt .
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN pip install --no-cache-dir -r requirements.txt
 
 
@@ -20,7 +20,7 @@ EXPOSE 8000 11434
 
 # Define the command to run the FastAPI application with Uvicorn
 # Replace 'main:app' with the actual path to your FastAPI application instance
-# CMD ["ollama serve &&", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
 # Using supervisor
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+# CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
