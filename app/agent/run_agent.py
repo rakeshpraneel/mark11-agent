@@ -17,7 +17,7 @@ global runner
 global session_service
 
 
-async def run_agent():
+async def run_agent(prompt):
     global runner
     global session_service
 
@@ -50,7 +50,7 @@ ALWAYS follow this smart-format rule.
 """
 
     chatbot_agent = LlmAgent(
-    model=Gemini(model="gemini-2.5-flash-lite", retry_options=retry.retry_config, system_instruction=system_instruction),
+    model=Gemini(model="gemini-2.5-flash-lite", retry_options=retry.retry_config, system_instruction=prompt),
     name="text_chat_bot",
     description="A text chatbot with persistent memory",
     tools=[google_search],
