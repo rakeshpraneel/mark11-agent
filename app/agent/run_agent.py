@@ -56,14 +56,22 @@ ALWAYS follow this smart-format rule.
     tools=[google_search],
 )
 
-    # Step 2: Switch to DatabaseSessionService
-    # SQLite database will be created automatically
-    # db_url = "sqlite:///my_agent_data.db"  # Local SQLite file
-    db_url = settings.DB_URL
-    session_service = DatabaseSessionService(db_url=db_url)
+    try:
+        # Step 2: Switch to DatabaseSessionService
+        # SQLite database will be created automatically
+        # db_url = "sqlite:///my_agent_data.db"  # Local SQLite file
+        db_url = settings.DB_URL
+        session_service = DatabaseSessionService(db_url=db_url)
 
-    # Step 3: Create a new runner with persistent storage
-    runner = Runner(agent=chatbot_agent, app_name=settings.APP_NAME, session_service=session_service)
+        print("Inside session creation.....")
+        print(db_url)
+        print(session_service)
+
+        # Step 3: Create a new runner with persistent storage
+        runner = Runner(agent=chatbot_agent, app_name=settings.APP_NAME, session_service=session_service)
+    except Exception as e:
+        print("Facing exception either in database connection or runner function.....")
+        print(str(e))
 
     print("✅ Upgraded to persistent sessions!")
     print(f" {session_service}  - Database: {db_url}")
