@@ -73,7 +73,7 @@ ALWAYS follow this smart-format rule.
         print("Facing exception either in database connection or runner function.....")
         print(str(e))
 
-    print("✅ Upgraded to persistent sessions!")
+    print("Updated to persistent sessions!")
     print(f" {session_service}  - Database: {db_url}")
     print(f"   - Sessions will survive restarts!")
 
