@@ -1,9 +1,9 @@
 # Use a lightweight Python base image
-FROM rocky03/saul-agent-custom-base:v1.0.1
+FROM python:3.10-slim-buster
 
-RUN apt-get update && apt-get install -y \
-    supervisor \
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y \
+#     supervisor \
+#     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
