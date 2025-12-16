@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . /app
 
 
-EXPOSE 8000 11434
+EXPOSE 8000
 
 # Define the command to run the FastAPI application with Uvicorn
 # Replace 'main:app' with the actual path to your FastAPI application instance
