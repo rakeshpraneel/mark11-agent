@@ -8,4 +8,5 @@ asyncpg
 qdrant-client
 beautifulsoup4
 aiohttp
-google-generativeai==1.49
+google-generativeai
+google-genai==1.49.0
