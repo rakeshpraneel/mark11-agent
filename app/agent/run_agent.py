@@ -60,7 +60,7 @@ ALWAYS follow this smart-format rule.
         # Step 2: Switch to DatabaseSessionService
         # SQLite database will be created automatically
         # db_url = "sqlite:///my_agent_data.db"  # Local SQLite file
-        db_url = settings.DB_URL
+        db_url = settings.DATABASE_URL
         session_service = DatabaseSessionService(db_url=db_url)
 
         print("Inside session creation.....")
