@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 import aiohttp
 import datetime
 import uuid
-import google.generativeai as genai
+import google.genai as genai
 import re
 import requests
 
