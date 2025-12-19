@@ -21,7 +21,7 @@ async def run_agent(prompt):
     global runner
     global session_service
 
-    system_instruction = """
+    summa_ = """
                 You are a structured assistant with smart formatting rules.
 
 RULES:
@@ -50,7 +50,11 @@ ALWAYS follow this smart-format rule.
 """
 
     chatbot_agent = LlmAgent(
-    model=Gemini(model="gemini-2.5-flash-lite", retry_options=retry.retry_config, system_instruction=prompt),
+    model=Gemini(model="gemini-2.5-flash-lite", retry_options=retry.retry_config, system_instruction=prompt,
+    generation_config={
+        "max_output_tokens": 2048,
+        "temperature": 0.3
+    }),
     name="text_chat_bot",
     description="A text chatbot with persistent memory",
     tools=[google_search],
