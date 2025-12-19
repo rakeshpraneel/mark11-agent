@@ -97,7 +97,8 @@ async def ask_to_agent(query: str, request: Request):
         # print(f"context:: {context}")
         
         
-        prompt = f"""You are a knowledgeable and context-grounded assistant, Saul. Optimized for Retrieval-Augmented Generation (RAG).
+        # TODO: Old version of prompt; after testing remove this
+        prompt = f"""You are a knowledgeable and context-grounded assistant, Saul.
                 ****
                 Your job is to **answer the user’s question in the way mentioned below**.
                 ---
@@ -108,6 +109,7 @@ async def ask_to_agent(query: str, request: Request):
                 ### **1. Grounding & Accuracy**
                 * If the question is very specific (e.g., *“When was the Indian Penal Code published?”*), give a precise answer:
                 → **“The Indian Penal Code was published in <year>.”**
+                * Answer needs to be detailed and precise, Give a complete response.
                 ### **2. Missing Information**
                 * If you are unable to find full answer for the question, explicitly state what is missing.
                 * Never hallucinate facts.
@@ -124,11 +126,10 @@ async def ask_to_agent(query: str, request: Request):
 
                 ### **5. Formatting Requirements**
 
-                * Use short paragraphs (max 3–4 sentences each).
                 * Use bullet points (`-` or `•`) for lists.
                 * Use numbered lists only when describing steps.
                 * Bold important terms using `**` … `**`.
-                * Keep the answer concise but complete.
+                * Complete the answer.
                 * Add blank lines between paragraphs.
                 * Follow the same structure and clarity as the sample output.
                 ---
@@ -163,6 +164,22 @@ async def ask_to_agent(query: str, request: Request):
 
         # local model
         # model = "llama3.2:3b"
+
+        # New version of prompt
+        prompt=f"""You are Saul, a helpful assistant.
+
+                Question: {query}
+
+                Provide a brief answer (3-5 sentences).
+
+                1. Intro
+                2. explanation
+                3. reference
+
+                **Important: Complete your response fully before stopping. Do not end mid-sentence.**
+                **If the response exceeds more than 100 words, try to keep it precise and provide the reference source url at the end**
+
+                Include sources at the end if available."""
         
         await run_agent.run_agent(prompt)
 
@@ -171,12 +188,12 @@ async def ask_to_agent(query: str, request: Request):
         try:
             response = await run_agent.process_msg(query, client_host)
 
-            answer = clean_and_format_response(response)
+            # answer = clean_and_format_response(response)
             # # answer = format_sources_citation(response,sources)
 
             # answer = format_lists(answer)
             # answer = format_to_human_readable(answer)
-            return JSONResponse(status_code=200, content=str(answer))
+            return JSONResponse(status_code=200, content=str(response))
         except Exception as e:
             return HTTPException(status_code=500, detail=str(e))
     
